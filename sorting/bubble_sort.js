@@ -14,7 +14,7 @@
 
     var unsorted = [...Array(num_of_els).keys()].sort(() => 0.5 - Math.random());
 
-    var svg = d3.select("#selection_sort")
+    var svg = d3.select("#bubble_sort")
         .append("svg")
         .attr("height", height + margin.top + margin.bottom)
         .attr("width", width + margin.left + margin.right)
@@ -27,30 +27,17 @@
         return "hsl(" + (number / num_of_els * 360) + ", 75%, 65%)";
     }
 
-    function update(unsorted_data, sorted_data, selected, smallest) {
+    function update(unsorted_data, bubble) {
         var unsorted_blocks = svg.selectAll('.unsorted_block')
             .data(unsorted_data, d => d)
             .attr('x', (d, i) => i * el_width)
-            .attr('y', (d, i) => el_height / 2 + (i == selected ? -10 : i == smallest ? 10 : 0));
+            .attr('y', (d, i) => height / 2 + (i == bubble || i == bubble + 1 ? -10 : 0));
 
         unsorted_blocks.exit().remove();
 
         unsorted_blocks.enter().append('rect')
             .attr('class', 'unsorted_block')
-            .attr('y', (d, i) => el_height / 2 + (i == selected ? -10 : i == smallest ? 10 : 0))
-            .attr('x', (d, i) => i * el_width)
-            .attr('width', el_width)
-            .attr('height', el_height)
-            .attr('fill', d => color(d));
-
-        var sorted_blocks = svg.selectAll('.sorted_block')
-            .data(sorted_data, d => d);
-
-        sorted_blocks.exit().remove();
-
-        sorted_blocks.enter().append('rect')
-            .attr('class', 'sorted_block')
-            .attr('y', el_height * 2)
+            .attr('y', (d, i) => height / 2 + (i == bubble || i == bubble + 1 ? -10 : 0))
             .attr('x', (d, i) => i * el_width)
             .attr('width', el_width)
             .attr('height', el_height)
@@ -58,21 +45,22 @@
     }
 
     function sort(data) {
-        var selected = 0,
-            smallest = 0,
-            sorted = [];
+        var bubble = 0,
+            count = data.length;
 
         var step = setInterval(() => {
-            smallest = data[selected] < data[smallest] ? selected : smallest;
-            selected++;
-            if (selected == data.length) {
-                sorted.push((data[smallest]));
-                data.splice(smallest, 1);
-                selected = 0;
-                smallest = 0;
+            if (bubble < count - 1) {
+                if (data[bubble] > data[bubble + 1]) {
+                    var tmp = data[bubble];
+                    data[bubble] = data[bubble + 1];
+                    data[bubble + 1] = tmp;
+                }
+            } else {
+                count--;
+                bubble = 0;
             }
-            update(data, sorted, selected, smallest);
-            if (data.length === 0) {
+            update(data, bubble++);
+            if (count === 0) {
                 clearInterval(step);
             }
         }, 20);
