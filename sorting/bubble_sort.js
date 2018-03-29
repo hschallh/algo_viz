@@ -31,7 +31,7 @@
         var unsorted_blocks = svg.selectAll('.unsorted_block')
             .data(unsorted_data, d => d)
             .attr('x', (d, i) => i * el_width)
-            .attr('y', (d, i) => height / 2 + (i == bubble || i == bubble + 1 ? -10 : 0));
+            .attr('y', (d, i) => (height - el_height) / 2 + (i == bubble || i == bubble + 1 ? -10 : 0));
 
         unsorted_blocks.exit().remove();
 
