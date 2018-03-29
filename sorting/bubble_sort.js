@@ -49,18 +49,20 @@
             count = data.length;
 
         var step = setInterval(() => {
+            update(data, bubble);
             if (bubble < count - 1) {
                 if (data[bubble] > data[bubble + 1]) {
                     var tmp = data[bubble];
                     data[bubble] = data[bubble + 1];
                     data[bubble + 1] = tmp;
                 }
+                bubble++;
             } else {
                 count--;
                 bubble = 0;
             }
-            update(data, bubble++);
             if (count === 0) {
+                update(data, -9);
                 clearInterval(step);
             }
         }, 20);
